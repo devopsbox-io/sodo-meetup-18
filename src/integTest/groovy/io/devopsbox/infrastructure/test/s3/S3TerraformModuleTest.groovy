@@ -1,6 +1,7 @@
 package io.devopsbox.infrastructure.test.s3
 
 import io.devopsbox.infrastructure.test.common.terraform.TerraformIntegrationTest
+import org.apache.commons.codec.digest.DigestUtils
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetBucketEncryptionRequest
@@ -35,6 +36,28 @@ class S3TerraformModuleTest extends TerraformIntegrationTest {
         def bucketName = "acme-" + environmentName() + "-tfzbigniew-pictures"
         checkBucketExists(bucketName)
         isBucketEncrypted(bucketName)
+
+        cleanup:
+        destroyTerraformModule("terraform/s3", constructProps)
+    }
+
+    def "should create s3 bucket with long name"() {
+        given:
+        def constructProps = new S3ConstructProps(
+                "acme",
+                environmentName(),
+                "tfzbigniew",
+                "pictures12345678901234567890123456789012345678901234567890"
+        )
+
+        when:
+        deployTerraformModule("terraform/s3", constructProps)
+
+        then:
+        def bucketName = DigestUtils.sha256Hex(
+                "acme-" + environmentName() + "-tfzbigniew-pictures12345678901234567890123456789012345678901234567890"
+        ).substring(0, 63)
+        checkBucketExists(bucketName)
 
         cleanup:
         destroyTerraformModule("terraform/s3", constructProps)
