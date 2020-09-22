@@ -19,15 +19,18 @@ class S3TerraformModuleTest extends TerraformIntegrationTest {
 
     def "should create s3 bucket"() {
         given:
-        def bucketName = "sodo-meetup-18-tftest91"
         def constructProps = new S3ConstructProps(
-                bucketName,
+                "acme",
+                environmentName(),
+                "tfzbigniew",
+                "pictures"
         )
 
         when:
         deployTerraformModule("terraform/s3", constructProps)
 
         then:
+        def bucketName = "acme-" + environmentName() + "-tfzbigniew-pictures"
         checkBucketExists(bucketName)
 
         cleanup:

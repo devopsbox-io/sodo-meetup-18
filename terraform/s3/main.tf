@@ -7,5 +7,5 @@ terraform {
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucketName
+  bucket = "${var.companyName}-${var.envName}-${var.appName}-${var.bucketPurpose}"
 }
