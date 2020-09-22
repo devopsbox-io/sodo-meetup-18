@@ -9,9 +9,10 @@ public class S3Construct extends Construct {
     public S3Construct(Construct scope, String id, S3ConstructProps props) {
         super(scope, id);
 
-        new Bucket(this, props.getBucketName(), BucketProps.builder()
+        String bucketName = props.getCompanyName() + "-" + props.getEnvName() + "-" + props.getAppName() + "-" + props.getBucketPurpose();
+        new Bucket(this, bucketName, BucketProps.builder()
                 .removalPolicy(RemovalPolicy.DESTROY)
-                .bucketName(props.getBucketName())
+                .bucketName(bucketName)
                 .build());
     }
 }

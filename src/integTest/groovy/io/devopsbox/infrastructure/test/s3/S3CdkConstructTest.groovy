@@ -20,15 +20,18 @@ class S3CdkConstructTest extends CdkIntegrationTest {
     def "should create s3 bucket"() {
         given:
         def stackId = environmentName() + "S3BucketConstructTest"
-        def bucketName = "sodo-meetup-18-test91"
         def constructProps = new S3ConstructProps(
-                bucketName,
+                "acme",
+                environmentName(),
+                "cdkzbigniew",
+                "pictures"
         )
 
         when:
         deployCdkConstruct(stackId, S3Construct, constructProps)
 
         then:
+        def bucketName = "acme-" + environmentName() + "-cdkzbigniew-pictures"
         checkBucketExists(bucketName)
 
         cleanup:
